@@ -36,32 +36,35 @@ class ArrayGroup(Group):
             surface.blit(par.image, self.particles[i])
 
 
-@numba.njit('(float64[:,:], float64[:,:], float64)', cache=True, fastmath=True, parallel=True)
-def nbody(particle, particlev, dt):
+@numba.jit(nopython=True, parallel=True, cache=True, fastmath=True)
+def nbody(particle, particlev, dt):  
     for i in numba.prange(N):
-        Fx, Fy = 0.0, 0.0
-        for j in numba.prange(N):
+        Fx = 0.0; Fy = 0.0; 
+        for j in range(N):
             if j != i:
                 dx = particle[j,0] - particle[i,0]
                 dy = particle[j,1] - particle[i,1]
-                drSquared = dx * dx + dy * dy
+               
+                drSquared = dx * dx + dy * dy + 1
                 drPowerN32 = 1.0 / (drSquared + np.sqrt(drSquared))
                 Fx += dx * drPowerN32
                 Fy += dy * drPowerN32
+                
             particlev[i, 0] += dt * Fx
             particlev[i, 1] += dt * Fy
-
+       
     for i in numba.prange(N):
         particle[i,0] += particlev[i,0] * dt
         particle[i,1] += particlev[i,1] * dt
-        particle[i,2] += particlev[i,2] * dt
+     
 
+      
 
 class GPUGroup(ArrayGroup):
     def update(self, dt):
         nbody(self.particles, self.particlev, dt)
         self.particles = np.clip(self.particles, 0, np.array([WIDTH, HEIGHT]) - Particle.radius)
-        
+
 
 
 class Particle(Sprite):
