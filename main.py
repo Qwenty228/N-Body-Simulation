@@ -1,14 +1,14 @@
 import pygame as pg
 
 from src.settings import *
-from src.particle import Particle, ArrayGroup
+from src.particle import Particle, ArrayGroup, GPUGroup
 
 class Window:
     def __init__(self) -> None:
         pg.init()
         self.screen = pg.display.set_mode(SIZE, pg.RESIZABLE| pg.SCALED | pg.SRCALPHA)
-        self.particles = ArrayGroup()
-        for _ in range(1000):
+        self.particles = GPUGroup()
+        for _ in range(N):
             Particle(self.particles)
         self.particles.startup()
        
@@ -17,7 +17,7 @@ class Window:
         clock = pg.time.Clock()
         running = True
         while running:
-            pg.display.set_caption(f"N Body | FPS: {int(clock.get_fps())}")
+            pg.display.set_caption(f"{N=} Body | FPS: {int(clock.get_fps())}")
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     running = False

@@ -1,6 +1,6 @@
 import pygame as pg
-from pygame.sprite import AbstractGroup, Sprite, Group
-
+from pygame.sprite import Sprite, Group
+import numba
 import numpy as np
 import random
 
@@ -17,10 +17,9 @@ class ArrayGroup(Group):
     def startup(self):
         self.particles = self.to_array()
         self.particlev = np.zeros_like(self.particles)
-        self.length = len(self.sprites())
 
     def update(self, dt, *args, **kwargs):
-        Fp = np.zeros((self.length, 2))
+        Fp = np.zeros((N, 2))
         for par in self.particles:
             dp = self.particles - par
             drSquared = np.sum(dp ** 2, axis=1)
@@ -35,6 +34,34 @@ class ArrayGroup(Group):
     def draw(self, surface):
         for i, par in enumerate(self.sprites()):
             surface.blit(par.image, self.particles[i])
+
+
+@numba.njit('(float64[:,:], float64[:,:], float64)', cache=True, fastmath=True, parallel=True)
+def nbody(particle, particlev, dt):
+    for i in numba.prange(N):
+        Fx, Fy = 0.0, 0.0
+        for j in numba.prange(N):
+            if j != i:
+                dx = particle[j,0] - particle[i,0]
+                dy = particle[j,1] - particle[i,1]
+                drSquared = dx * dx + dy * dy
+                drPowerN32 = 1.0 / (drSquared + np.sqrt(drSquared))
+                Fx += dx * drPowerN32
+                Fy += dy * drPowerN32
+            particlev[i, 0] += dt * Fx
+            particlev[i, 1] += dt * Fy
+
+    for i in numba.prange(N):
+        particle[i,0] += particlev[i,0] * dt
+        particle[i,1] += particlev[i,1] * dt
+        particle[i,2] += particlev[i,2] * dt
+
+
+class GPUGroup(ArrayGroup):
+    def update(self, dt):
+        nbody(self.particles, self.particlev, dt)
+        self.particles = np.clip(self.particles, 0, np.array([WIDTH, HEIGHT]) - Particle.radius)
+        
 
 
 class Particle(Sprite):

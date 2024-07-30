@@ -1,2 +1,6 @@
 SIZE = WIDTH, HEIGHT = (800, 600)
-FPS = 120
+FPS = 100
+
+
+
+N = 100
