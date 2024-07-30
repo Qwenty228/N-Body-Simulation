@@ -8,15 +8,16 @@ class Window:
         pg.init()
         self.screen = pg.display.set_mode(SIZE, pg.RESIZABLE| pg.SCALED | pg.SRCALPHA)
         self.particles = ArrayGroup()
-        for _ in range(10):
+        for _ in range(500):
             Particle(self.particles)
-        Particle.particles = self.particles.to_array()
+        self.particles.startup()
+       
 
     def run(self):
-        pg.display.set_caption("My Game")
         clock = pg.time.Clock()
         running = True
         while running:
+            pg.display.set_caption(f"N Body | FPS: {int(clock.get_fps())}")
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     running = False
@@ -30,6 +31,7 @@ class Window:
             self.particles.draw(self.screen)
 
             pg.display.flip()
+
         pg.quit()
 
 
