@@ -19,5 +19,10 @@ To run the N-Body simulation, you need to have Python installed along with the f
 
 You can install the required packages using pip:
 
+## Example
+https://github.com/user-attachments/assets/8dcc78f3-1ca7-40ec-aecd-fc65c174306f
+
+
+
 ```sh
 pip install -r requirements.txt
