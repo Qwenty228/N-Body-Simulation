@@ -14,9 +14,8 @@ To run the N-Body simulation, you need to have Python installed along with the f
 
 - NumPy
 - Numba
-- Matplotlib (for visualization)
 
 You can install the required packages using pip:
 
 ```sh
-pip install numpy numba matplotlib
+pip install numpy numba 
