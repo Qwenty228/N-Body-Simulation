@@ -10,8 +10,6 @@ from .settings import *
 class ArrayGroup(Group):
     def __init__(self, *sprites) -> None:
         super().__init__(sprites)
-        
-
 
     def to_array(self):
         return np.array([sprite.rect for sprite in self.sprites()], dtype=np.float64)
@@ -31,6 +29,8 @@ class ArrayGroup(Group):
             Fp += -(dp.T * drPowerN32).T 
             self.particlev += dt * Fp 
         self.particles += self.particlev * dt
+        self.particles = np.clip(self.particles, 0, np.array([WIDTH, HEIGHT]) - Particle.radius)
+        
 
     def draw(self, surface):
         for i, par in enumerate(self.sprites()):
@@ -38,10 +38,10 @@ class ArrayGroup(Group):
 
 
 class Particle(Sprite):
+    radius = 5
     def __init__(self, group) -> None:
         super().__init__(group)
 
-        self.radius = 5
         self.color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 
         self.image = pg.Surface((self.radius * 2, self.radius * 2), pg.SRCALPHA)
