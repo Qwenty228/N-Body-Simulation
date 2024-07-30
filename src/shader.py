@@ -58,13 +58,14 @@ class Shader:
         )
 
     def render(self, surface: pg.Surface):
-        tex = self.ctx.texture(surface.get_size(), 4)  # number of color channels
+        # number of color channels
+        tex = self.ctx.texture(surface.get_size(), 4)
         tex.filter = (moderngl.NEAREST, moderngl.NEAREST)  # no interpolation
         tex.swizzle = 'BGRA'  # gl differs from pygame, so we have to swizzle the colors
-        tex.write(surface.get_view('1'))  # write the surface to the texture 
+        tex.write(surface.get_view('1'))  # write the surface to the texture
         tex.use(0)
         self.program['tex'] = 0
-        self.program['iResolution'] = self.screen_size 
+        self.program['iResolution'] = self.screen_size
         self.program['originalResolution'] = SIZE
         self.vao.render(mode=moderngl.TRIANGLE_STRIP)
 
@@ -72,16 +73,17 @@ class Shader:
         if event.type == pg.VIDEORESIZE:
             self.screen_size = event.size
             Mouse.ratio = min(event.w/WIDTH, event.h/HEIGHT)
-            Mouse.offset = (event.w - WIDTH * Mouse.ratio) / 2.0, (event.h - HEIGHT * Mouse.ratio) / 2.0
-        
-
+            Mouse.offset = (event.w - WIDTH * Mouse.ratio) / \
+                2.0, (event.h - HEIGHT * Mouse.ratio) / 2.0
 
 
 class Mouse:
     offset = (0, 0)
     pos = (0, 0)
     ratio = 1
+
     @classmethod
     def update(cls):
         x, y = pg.mouse.get_pos()
-        cls.pos = (x - cls.offset[0]) /cls.ratio , (y - cls.offset[1] )/ cls.ratio
+        cls.pos = (x - cls.offset[0]) / \
+            cls.ratio, (y - cls.offset[1]) / cls.ratio

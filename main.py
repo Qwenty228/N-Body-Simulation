@@ -4,16 +4,17 @@ from src.settings import *
 from src.particle import Particle, ArrayGroup, GPUGroup
 from src.shader import Shader, Mouse
 
+
 class Window:
     def __init__(self) -> None:
         pg.init()
-        self.screen = pg.display.set_mode(SIZE, pg.RESIZABLE|pg.OPENGL|pg.DOUBLEBUF, vsync=1)
+        self.screen = pg.display.set_mode(
+            SIZE, pg.RESIZABLE | pg.OPENGL | pg.DOUBLEBUF, vsync=1)
         self.particles = GPUGroup()
         # self.particles = ArrayGroup()
         for _ in range(N):
             Particle(self.particles)
         self.particles.startup()
-       
 
     def run(self):
         shader = Shader()

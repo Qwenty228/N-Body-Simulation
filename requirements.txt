@@ -1,0 +1,4 @@
+moderngl==5.9.0
+numba==0.60.0
+numpy==1.25.2
+pygame_ce==2.3.1
