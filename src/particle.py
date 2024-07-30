@@ -24,9 +24,9 @@ class ArrayGroup(Group):
         for par in self.particles:
             dp = self.particles - par
             drSquared = np.sum(dp ** 2, axis=1)
-            h = drSquared + np.sqrt(drSquared)
-            drPowerN32 = 1. / np.maximum(h, 1E-10)
-            Fp += -(dp.T * drPowerN32).T 
+            h = np.sqrt(drSquared) + drSquared
+            drPowerN32 = 1. / (np.maximum(h, 1E-10))
+            Fp += -(dp.T * drPowerN32).T    # - sum G mm / r^2 * r_hat
             self.particlev += dt * Fp 
         self.particles += self.particlev * dt
         self.particles = np.clip(self.particles, 0, np.array([WIDTH, HEIGHT]) - Particle.radius)
@@ -38,7 +38,7 @@ class ArrayGroup(Group):
 
 
 class Particle(Sprite):
-    radius = 5
+    radius = 2
     def __init__(self, group) -> None:
         super().__init__(group)
 
@@ -46,6 +46,7 @@ class Particle(Sprite):
 
         self.image = pg.Surface((self.radius * 2, self.radius * 2), pg.SRCALPHA)
         self.image.fill((0, 0, 0, 0))
+        # self.image.fill('white')
         pg.draw.circle(self.image, self.color, (self.radius, self.radius), self.radius)
 
         self.rect = np.array([random.randint(self.radius, WIDTH - self.radius) - self.radius, random.randint(self.radius, HEIGHT - self.radius) - self.radius]) # center

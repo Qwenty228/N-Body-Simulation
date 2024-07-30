@@ -8,7 +8,7 @@ class Window:
         pg.init()
         self.screen = pg.display.set_mode(SIZE, pg.RESIZABLE| pg.SCALED | pg.SRCALPHA)
         self.particles = ArrayGroup()
-        for _ in range(500):
+        for _ in range(1000):
             Particle(self.particles)
         self.particles.startup()
        
